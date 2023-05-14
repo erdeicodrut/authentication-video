@@ -26,23 +26,12 @@ class NamesService {
   }
 
   Future<void> addName(String name) async {
-    final accessToken = await storage.read(key: ApiConstants.accessTokenKey);
+    final response = await dio.post(
+      '/names',
+      data: {'name': name},
+    );
 
-    if (accessToken == null) {
-      throw Exception('Access token not found');
-    }
-
-    try {
-      final response = await dio.post(
-        '/names',
-        data: {'name': name},
-        options: Options(headers: {'Authorization': 'Bearer $accessToken'}),
-      );
-
-      if (response.statusCode != 201) {
-        throw Exception('Failed to add name');
-      }
-    } catch (e) {
+    if (response.statusCode != 201) {
       throw Exception('Failed to add name');
     }
   }
